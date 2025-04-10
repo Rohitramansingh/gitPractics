@@ -35,7 +35,7 @@ const MyForm = () => {
     >
       {({ values, setFieldValue }) => (
         <Form className="flex flex-col items-center w-[40%] mx-auto border mt-24 p-5">
-          <p>Form Revert</p>
+          <p>Form</p>
           <FieldArray name="students">
             {({ push, remove }) => (
               <div>
