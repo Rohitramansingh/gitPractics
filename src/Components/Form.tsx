@@ -2,6 +2,8 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
+import { url } from "inspector";
+import Image from "next/image";
 
 // Validation Schema using Yup
 const validationSchema = Yup.object({
@@ -10,13 +12,14 @@ const validationSchema = Yup.object({
       name: Yup.string().required("Name is required"),
       roll: Yup.string().required("Roll is required"),
       class: Yup.string().required("Class is required"),
+      img: Yup.mixed().nullable().required("Image is required"),
     })
   ),
 });
 
 const MyForm = () => {
   const initialValues = {
-    students: [{ name: "", roll: "", class: "" }],
+    students: [{ name: "", roll: "", class: "", img: "" }],
   };
 
   const handleSubmit = (values: any) => {
@@ -30,7 +33,7 @@ const MyForm = () => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ values }) => (
+      {({ values, setFieldValue }) => (
         <Form className="flex flex-col items-center w-[40%] mx-auto border mt-24 p-5">
           <p>Form</p>
           <FieldArray name="students">
@@ -47,6 +50,7 @@ const MyForm = () => {
                         placeholder="Name"
                         className="border p-2 w-full  "
                       />
+
                       <ErrorMessage
                         name={`students[${index}].name`}
                         component="div"
@@ -80,6 +84,33 @@ const MyForm = () => {
                       />
                     </div>
 
+                    <div>
+                      <input
+                        className="bg-gray-200 p-1 "
+                        type="file"
+                        onChange={(e: any) =>
+                          setFieldValue(
+                            `students[${index}].img`,
+                            URL.createObjectURL(e.target.files[0])
+                          )
+                        }
+                        name={`students[${index}].img`}
+                      />
+                      {values?.students[index]?.img && (
+                        <Image
+                          src={values?.students[index]?.img}
+                          width={200}
+                          height={200}
+                          alt="img"
+                        />
+                      )}
+                      <ErrorMessage
+                        name={`students[${index}].img`}
+                        component="div"
+                        className="error text-sm text-red-500 "
+                      />
+                    </div>
+
                     <button type="button" onClick={() => remove(index)}>
                       Remove
                     </button>
@@ -87,7 +118,9 @@ const MyForm = () => {
                 ))}
                 <button
                   type="button"
-                  onClick={() => push({ name: "", roll: "", class: "" })}
+                  onClick={() =>
+                    push({ name: "", roll: "", class: "", img: "" })
+                  }
                 >
                   Add Student
                 </button>
